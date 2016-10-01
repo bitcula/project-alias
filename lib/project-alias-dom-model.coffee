@@ -42,21 +42,25 @@ class ProjectAliasDomModel
 
   # Returns the directory of a project
   getProjectPath: (projectElement) ->
-    projectPath = projectElement.attributes['data-path'].value
+    projectPath = $(projectElement).find("span").filter($(".name"))[0].attributes['data-path'].value
     projectPath
 
   # The original project name is the last folder of the path
   getOriginalProjectName: (projectElement) ->
     projectPath = @getProjectPath(projectElement)
-    console.log path.basename(projectPath)
-    return
+    name = path.basename(projectPath)
+    name
 
     # A project is selected when the user right clicks on it
   getSelectedProject: ->
-    project = $('.tree-view .selected').find('span')[0]
+    project = $('.tree-view .selected')
     project
+
+  getProjectName: (projectElement) ->
+    projectName = $(projectElement).find("span").filter($(".name"))[0].innerHTML
+    projectName
 
   getSelectedProjectName: ->
     project = @getSelectedProject()
-    projectName = project.innerHTML
+    projectName = @getProjectName(project)
     return projectName

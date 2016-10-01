@@ -7,6 +7,7 @@ module.exports = ProjectAlias =
   projectAliasViewModel: null
   modalRenamePanel: null
   subscriptions: null
+  openSubscription: null
 
   activate: (state) ->
     @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
@@ -20,6 +21,9 @@ module.exports = ProjectAlias =
 
     # The view has to execute its callback methods on this module
     @projectAliasRenameView.setCallback this
+
+    @openSubscription = atom.workspace.onDidOpen =>
+      @refreshToolTips()
 
     return
 
@@ -40,12 +44,15 @@ module.exports = ProjectAlias =
 
   # Will be called by modalRenamePanel when the user interacts with a button
   closeRenameView: (newName) ->
+    debugger
     @projectAliasViewModel.rename(newName)
     @modalRenamePanel.hide()
 
-  #updateTooltips = ->
-    #console.log 'Update Tooltips'
-    #projects = @projectAliasController.getProjectElements()
-    #for p of projects
-    #  console.dir p
-    #return
+  refreshToolTips: () ->
+    projects = @projectAliasViewModel.getProjectElements()
+    for project in projects
+        originalProjectName = @projectAliasViewModel.getOriginalProjectName(project)
+        currentProjectName = @projectAliasViewModel.getProjectName(project)
+        if originalProjectName isnt currentProjectName
+          title = "Original Name: " + originalProjectName
+          @subscriptions.add atom.tooltips.add(project, {title: title})
