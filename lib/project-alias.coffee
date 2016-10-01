@@ -8,13 +8,13 @@ $ = jQuery
 module.exports = ProjectAlias =
   projectAliasRenameView: null
   projectAliasController:null
-  modalPanel: null
+  modalRenamePanel: null
   subscriptions: null
 
   activate: (state) ->
     @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
     @projectAliasController = new ProjectAliasDomModel()
-    @modalPanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
+    @modalRenamePanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
 
     # Used to store the name of a project which shall be renamed
     @currentName = undefined
@@ -35,7 +35,7 @@ module.exports = ProjectAlias =
     return
 
   deactivate: ->
-    @modalPanel.destroy()
+    @modalRenamePanel.destroy()
     @subscriptions.dispose()
     @openSubscription.dispose()
     @projectAliasRenameView.destroy()
@@ -48,13 +48,13 @@ module.exports = ProjectAlias =
     project = @getSelectedProject()
     oriName = @projectAliasController.getOriginalProjectName project
     @currentName = project.innerHTML
-    @modalPanel.show()
+    @modalRenamePanel.show()
     return
 
   setProjectName: (newName) ->
     if newName
       @projectAliasController.renameProject @currentName, newName
-    @modalPanel.hide()
+    @modalRenamePanel.hide()
     return
 
   # A project is selected when the user right clicks on it
@@ -72,7 +72,7 @@ module.exports = ProjectAlias =
   toggle: ->
     console.log 'ProjectAlias was toggled!'
 
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
+    if @modalRenamePanel.isVisible()
+      @modalRenamePanel.hide()
     else
-      @modalPanel.show()
+      @modalRenamePanel.show()
