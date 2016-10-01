@@ -15,7 +15,6 @@ module.exports = ProjectAlias =
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
-
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @showRenameView()
 
@@ -34,6 +33,7 @@ module.exports = ProjectAlias =
   serialize: ->
     projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
+    # Called when the user right-clicks a project
   showRenameView: ->
     @modalRenamePanel.show()
     return
