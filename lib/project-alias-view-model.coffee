@@ -16,13 +16,7 @@ class ProjectAliasViewModel
     @projectAliasDomModel.destroy()
     # openSubscription.dispose()
 
-  getSelectedProject: ->
-    p = @projectAliasDomModel.getSelectedProject()
-    p
-
-  getOriginalProjectName: (project) ->
-    n = @projectAliasDomModel.getOriginalProjectName(project)
-    n
-
-  renameProject: (originalName, aliasName) ->
-    @projectAliasDomModel.renameProject(originalName, aliasName)
+  rename: (aliasName) ->
+    if aliasName
+      currentName = @projectAliasDomModel.getSelectedProjectName()
+      @projectAliasDomModel.renameProject(currentName, aliasName)

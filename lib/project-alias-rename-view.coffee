@@ -61,10 +61,10 @@ class ProjectAliasRenameView
   submit: ->
     console.log 'Submit'
     projectName = textEdit.getText()
-    @callback.setProjectName projectName
+    @callback.closeRenameView projectName
     return
 
   cancel: ->
     console.log 'Cancel'
-    callback.setProjectName ''
+    callback.closeRenameView ''
     return

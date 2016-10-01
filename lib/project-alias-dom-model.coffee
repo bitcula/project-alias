@@ -55,3 +55,8 @@ class ProjectAliasDomModel
   getSelectedProject: ->
     project = $('.tree-view .selected').find('span')[0]
     project
+
+  getSelectedProjectName: ->
+    project = @getSelectedProject()
+    projectName = project.innerHTML
+    return projectName
