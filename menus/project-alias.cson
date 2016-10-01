@@ -6,17 +6,3 @@
         "command": "project-alias:rename"
       }
     ]
-'menu': [
-  {
-    'label': 'Packages'
-    'submenu': [
-      'label': 'project-alias'
-      'submenu': [
-        {
-          'label': 'Toggle'
-          'command': 'project-alias:toggle'
-        }
-      ]
-    ]
-  }
-]

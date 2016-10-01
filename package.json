@@ -1,9 +1,13 @@
 {
   "name": "project-alias",
   "main": "./lib/project-alias",
-  "version": "0.0.0",
-  "description": "A short description of your package",
+  "version": "0.1.0",
+  "description": "Makes it possible to rename a project",
   "keywords": [
+    "project",
+    "alias",
+    "rename",
+    "project-alias"
   ],
   "repository": "https://github.com/atom/project-alias",
   "license": "MIT",
