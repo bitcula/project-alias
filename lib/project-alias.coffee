@@ -17,6 +17,9 @@ module.exports = ProjectAlias =
     @projectAliasController = new ProjectAliasController
     @modalPanel = atom.workspace.addModalPanel(item: @projectAliasView.getElement(), visible: false)
 
+    # Used to store the name of a project which shall be renamed
+    @currentName = undefined
+
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
@@ -24,21 +27,18 @@ module.exports = ProjectAlias =
     @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:toggle': => @toggle()
     @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @renameWrapper()
 
+    @openSubscription = atom.workspace.onDidOpen =>
+      @projectAliasController.getProjectElements()
+
     # The view has to execute its callback methods on this module
     @projectAliasView.setCallback this
-
-    #@didOpenSubscription = atom.workspace.onDidOpen(((_this) ->
-    #->
-    #  _this.atomProjectAliasController.GetProjectElements()
-    #)(this))
-
-    @currentName = undefined
 
     return
 
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
+    @openSubscription.dispose()
     @projectAliasView.destroy()
     @projectAliasController.destroy()
 
