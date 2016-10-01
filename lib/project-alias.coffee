@@ -1,4 +1,4 @@
-ProjectAliasView = require './project-alias-view'
+ProjectAliasRenameView = require './project-alias-rename-view'
 ProjectAliasDomModel = require './project-alias-dom-model'
 {CompositeDisposable} = require 'atom'
 
@@ -6,15 +6,15 @@ jQuery = require 'jquery'
 $ = jQuery
 
 module.exports = ProjectAlias =
-  projectAliasView: null
+  projectAliasRenameView: null
   projectAliasController:null
   modalPanel: null
   subscriptions: null
 
   activate: (state) ->
-    @projectAliasView = new ProjectAliasView(state.projectAliasViewState)
+    @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
     @projectAliasController = new ProjectAliasDomModel()
-    @modalPanel = atom.workspace.addModalPanel(item: @projectAliasView.getElement(), visible: false)
+    @modalPanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
 
     # Used to store the name of a project which shall be renamed
     @currentName = undefined
@@ -30,7 +30,7 @@ module.exports = ProjectAlias =
       @projectAliasController.getProjectElements()
 
     # The view has to execute its callback methods on this module
-    @projectAliasView.setCallback this
+    @projectAliasRenameView.setCallback this
 
     return
 
@@ -38,11 +38,11 @@ module.exports = ProjectAlias =
     @modalPanel.destroy()
     @subscriptions.dispose()
     @openSubscription.dispose()
-    @projectAliasView.destroy()
+    @projectAliasRenameView.destroy()
     @projectAliasController.destroy()
 
   serialize: ->
-    projectAliasViewState: @projectAliasView.serialize()
+    projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
   renameWrapper: ->
     project = @getSelectedProject()

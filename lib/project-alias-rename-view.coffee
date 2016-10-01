@@ -5,7 +5,7 @@ $ = jQuery
 textEdit = undefined
 
 module.exports =
-class ProjectAliasView
+class ProjectAliasRenameView
   constructor: (serializedState) ->
     # Create root element
     @root = document.createElement('div')
