@@ -5,7 +5,7 @@ $ = jQuery
 textEdit = undefined
 
 module.exports =
-class ProjectAliasView
+class ProjectAliasRenameView
   constructor: (serializedState) ->
     # Create root element
     @root = document.createElement('div')
@@ -59,13 +59,12 @@ class ProjectAliasView
     return
 
   submit: ->
-    debugger
     console.log 'Submit'
     projectName = textEdit.getText()
-    @callback.setProjectName projectName
+    @callback.closeRenameView projectName
     return
 
   cancel: ->
     console.log 'Cancel'
-    callback.setProjectName ''
+    callback.closeRenameView ''
     return

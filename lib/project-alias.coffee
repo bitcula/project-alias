@@ -1,67 +1,47 @@
-ProjectAliasView = require './project-alias-view'
-ProjectAliasController = require './project-alias-controller'
+ProjectAliasRenameView = require './project-alias-rename-view'
+ProjectAliasViewModel = require './project-alias-view-model'
 {CompositeDisposable} = require 'atom'
 
-jQuery = require 'jquery'
-$ = jQuery
-
 module.exports = ProjectAlias =
-  projectAliasView: null
-  projectAliasController:null
-  modalPanel: null
+  projectAliasRenameView: null
+  projectAliasViewModel: null
+  modalRenamePanel: null
   subscriptions: null
 
-
   activate: (state) ->
-    @projectAliasView = new ProjectAliasView(state.projectAliasViewState)
-    @projectAliasController = new ProjectAliasController
-    @modalPanel = atom.workspace.addModalPanel(item: @projectAliasView.getElement(), visible: false)
-
-    # Used to store the name of a project which shall be renamed
-    @currentName = undefined
+    @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
+    @projectAliasViewModel = new ProjectAliasViewModel()
+    @modalRenamePanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:toggle': => @toggle()
-    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @renameWrapper()
-
-    @openSubscription = atom.workspace.onDidOpen =>
-      @projectAliasController.getProjectElements()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @showRenameView()
 
     # The view has to execute its callback methods on this module
-    @projectAliasView.setCallback this
+    @projectAliasRenameView.setCallback this
 
     return
 
   deactivate: ->
-    @modalPanel.destroy()
+    @modalRenamePanel.destroy()
     @subscriptions.dispose()
     @openSubscription.dispose()
-    @projectAliasView.destroy()
-    @projectAliasController.destroy()
+    @projectAliasRenameView.destroy()
+    @projectAliasViewModel.destroy()
 
   serialize: ->
-    projectAliasViewState: @projectAliasView.serialize()
+    projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
-  renameWrapper: ->
-    project = @getSelectedProject()
-    oriName = @projectAliasController.getOriginalProjectName project
-    @currentName = project.innerHTML
-    @modalPanel.show()
+  showRenameView: ->
+    @modalRenamePanel.show()
     return
 
-  setProjectName: (newName) ->
-    if newName
-      @projectAliasController.renameProject @currentName, newName
-    @modalPanel.hide()
-    return
-
-  # A project is selected when the user right clicks on it
-  getSelectedProject: ->
-    project = $('.tree-view .selected').find('span')[0]
-    project
+  # Will be called by modalRenamePanel when the user interacts with a button
+  closeRenameView: (newName) ->
+    @projectAliasViewModel.rename(newName)
+    @modalRenamePanel.hide()
 
   #updateTooltips = ->
     #console.log 'Update Tooltips'
@@ -69,11 +49,3 @@ module.exports = ProjectAlias =
     #for p of projects
     #  console.dir p
     #return
-
-  toggle: ->
-    console.log 'ProjectAlias was toggled!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
-    else
-      @modalPanel.show()
