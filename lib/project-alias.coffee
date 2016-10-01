@@ -1,5 +1,5 @@
 ProjectAliasView = require './project-alias-view'
-ProjectAliasController = require './project-alias-controller'
+ProjectAliasDomModel = require './project-alias-dom-model'
 {CompositeDisposable} = require 'atom'
 
 jQuery = require 'jquery'
@@ -11,10 +11,9 @@ module.exports = ProjectAlias =
   modalPanel: null
   subscriptions: null
 
-
   activate: (state) ->
     @projectAliasView = new ProjectAliasView(state.projectAliasViewState)
-    @projectAliasController = new ProjectAliasController
+    @projectAliasController = new ProjectAliasDomModel()
     @modalPanel = atom.workspace.addModalPanel(item: @projectAliasView.getElement(), visible: false)
 
     # Used to store the name of a project which shall be renamed

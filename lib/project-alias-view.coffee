@@ -59,7 +59,6 @@ class ProjectAliasView
     return
 
   submit: ->
-    debugger
     console.log 'Submit'
     projectName = textEdit.getText()
     @callback.setProjectName projectName
