@@ -1,28 +1,8 @@
 # See https://atom.io/docs/latest/hacking-atom-package-word-count#menus for more details
 'context-menu':
-  'atom-text-editor': [
-    {
-      'label': 'Toggle project-alias'
-      'command': 'project-alias:toggle'
-    }
-  ],
   ".header": [
       {
         "label": "Rename Project",
         "command": "project-alias:rename"
       }
     ]
-'menu': [
-  {
-    'label': 'Packages'
-    'submenu': [
-      'label': 'project-alias'
-      'submenu': [
-        {
-          'label': 'Toggle'
-          'command': 'project-alias:toggle'
-        }
-      ]
-    ]
-  }
-]

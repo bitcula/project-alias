@@ -1,79 +1,58 @@
-ProjectAliasView = require './project-alias-view'
-ProjectAliasController = require './project-alias-controller'
+ProjectAliasRenameView = require './project-alias-rename-view'
+ProjectAliasViewModel = require './project-alias-view-model'
 {CompositeDisposable} = require 'atom'
 
-jQuery = require 'jquery'
-$ = jQuery
-
 module.exports = ProjectAlias =
-  projectAliasView: null
-  projectAliasController:null
-  modalPanel: null
+  projectAliasRenameView: null
+  projectAliasViewModel: null
+  modalRenamePanel: null
   subscriptions: null
-
+  openSubscription: null
 
   activate: (state) ->
-    @projectAliasView = new ProjectAliasView(state.projectAliasViewState)
-    @projectAliasController = new ProjectAliasController
-    @modalPanel = atom.workspace.addModalPanel(item: @projectAliasView.getElement(), visible: false)
+    @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
+    @projectAliasViewModel = new ProjectAliasViewModel()
+    @modalRenamePanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
-
     # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:toggle': => @toggle()
-    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @renameWrapper()
+    @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @showRenameView()
 
     # The view has to execute its callback methods on this module
-    @projectAliasView.setCallback this
+    @projectAliasRenameView.setCallback this
 
-    #@didOpenSubscription = atom.workspace.onDidOpen(((_this) ->
-    #->
-    #  _this.atomProjectAliasController.GetProjectElements()
-    #)(this))
-
-    @currentName = undefined
+    @openSubscription = atom.workspace.onDidOpen =>
+      @refreshToolTips()
 
     return
 
   deactivate: ->
-    @modalPanel.destroy()
+    @modalRenamePanel.destroy()
     @subscriptions.dispose()
-    @projectAliasView.destroy()
-    @projectAliasController.destroy()
+    @openSubscription.dispose()
+    @projectAliasRenameView.destroy()
+    @projectAliasViewModel.destroy()
 
   serialize: ->
-    projectAliasViewState: @projectAliasView.serialize()
+    projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
-  renameWrapper: ->
-    project = @getSelectedProject()
-    oriName = @projectAliasController.getOriginalProjectName project
-    @currentName = project.innerHTML
-    @modalPanel.show()
+    # Called when the user right-clicks a project
+  showRenameView: ->
+    @modalRenamePanel.show()
     return
 
-  setProjectName: (newName) ->
-    if newName
-      @projectAliasController.renameProject @currentName, newName
-    @modalPanel.hide()
-    return
+  # Will be called by modalRenamePanel when the user interacts with a button
+  closeRenameView: (newName) ->
+    debugger
+    @projectAliasViewModel.rename(newName)
+    @modalRenamePanel.hide()
 
-  # A project is selected when the user right clicks on it
-  getSelectedProject: ->
-    project = $('.tree-view .selected').find('span')[0]
-    project
-
-  #updateTooltips = ->
-    #console.log 'Update Tooltips'
-    #projects = @projectAliasController.getProjectElements()
-    #for p of projects
-    #  console.dir p
-    #return
-
-  toggle: ->
-    console.log 'ProjectAlias was toggled!'
-
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
-    else
-      @modalPanel.show()
+  refreshToolTips: () ->
+    projects = @projectAliasViewModel.getProjectElements()
+    for project in projects
+        originalProjectName = @projectAliasViewModel.getOriginalProjectName(project)
+        currentProjectName = @projectAliasViewModel.getProjectName(project)
+        if originalProjectName isnt currentProjectName
+          title = "Original Name: " + originalProjectName
+          @subscriptions.add atom.tooltips.add(project, {title: title})
