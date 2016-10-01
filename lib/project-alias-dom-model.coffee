@@ -1,14 +1,15 @@
 path = require 'path'
+jQuery = require 'jquery'
+$ = jQuery
 
 module.exports =
 class ProjectAliasDomModel
   projects: null
 
   constructor: () ->
-    @_refreshProjects()
-    # TODO: Subscribe somehow on "Open Project" event
+    @refreshProjects()
 
-  _refreshProjects: () ->
+  refreshProjects: () ->
     @projects = document.getElementsByClassName 'project-root'
 
   getProjectElements: () ->
@@ -49,3 +50,8 @@ class ProjectAliasDomModel
     projectPath = @getProjectPath(projectElement)
     console.log path.basename(projectPath)
     return
+
+    # A project is selected when the user right clicks on it
+  getSelectedProject: ->
+    project = $('.tree-view .selected').find('span')[0]
+    project

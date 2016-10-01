@@ -1,19 +1,16 @@
 ProjectAliasRenameView = require './project-alias-rename-view'
-ProjectAliasDomModel = require './project-alias-dom-model'
+ProjectAliasViewModel = require './project-alias-view-model'
 {CompositeDisposable} = require 'atom'
-
-jQuery = require 'jquery'
-$ = jQuery
 
 module.exports = ProjectAlias =
   projectAliasRenameView: null
-  projectAliasController:null
+  projectAliasViewModel: null
   modalRenamePanel: null
   subscriptions: null
 
   activate: (state) ->
     @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
-    @projectAliasController = new ProjectAliasDomModel()
+    @projectAliasViewModel = new ProjectAliasViewModel()
     @modalRenamePanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
 
     # Used to store the name of a project which shall be renamed
@@ -26,9 +23,6 @@ module.exports = ProjectAlias =
     @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:toggle': => @toggle()
     @subscriptions.add atom.commands.add 'atom-workspace', 'project-alias:rename': => @renameWrapper()
 
-    @openSubscription = atom.workspace.onDidOpen =>
-      @projectAliasController.getProjectElements()
-
     # The view has to execute its callback methods on this module
     @projectAliasRenameView.setCallback this
 
@@ -39,28 +33,23 @@ module.exports = ProjectAlias =
     @subscriptions.dispose()
     @openSubscription.dispose()
     @projectAliasRenameView.destroy()
-    @projectAliasController.destroy()
+    @projectAliasViewModel.destroy()
 
   serialize: ->
     projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
   renameWrapper: ->
-    project = @getSelectedProject()
-    oriName = @projectAliasController.getOriginalProjectName project
+    project = @projectAliasViewModel.getSelectedProject()
+    oriName = @projectAliasViewModel.getOriginalProjectName(project)
     @currentName = project.innerHTML
     @modalRenamePanel.show()
     return
 
   setProjectName: (newName) ->
     if newName
-      @projectAliasController.renameProject @currentName, newName
+      @projectAliasViewModel.renameProject(@currentName, newName)
     @modalRenamePanel.hide()
     return
-
-  # A project is selected when the user right clicks on it
-  getSelectedProject: ->
-    project = $('.tree-view .selected').find('span')[0]
-    project
 
   #updateTooltips = ->
     #console.log 'Update Tooltips'
