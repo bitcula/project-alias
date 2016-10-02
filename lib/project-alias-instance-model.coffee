@@ -1,5 +1,7 @@
 module.exports =
 class ProjectAliasInstanceModel
+  atom.deserializers.add(this)
+
   originalProjectName: null
   aliasProjectName: null
   projectPath: null
@@ -17,4 +19,9 @@ class ProjectAliasInstanceModel
 
   getProjectPath: () ->
     @projectPath
-  
+
+  update: (instanceModel) ->
+    @aliasProjectName = instanceModel.getAliasProjectName()
+
+  serialize: () ->
+    deserializer: 'MyObject', data: @data
