@@ -22,6 +22,12 @@ class ProjectAliasDomModel
       return
     projectNames
 
+  getProjectPaths: () ->
+    projectPaths = []
+    for p in @projects
+      projectPaths.push(@getProjectPath(pl))
+    projectPaths    
+
   getProjectElement: (name) ->
     ret = null
     Array::forEach.call @projects, (project) ->
@@ -64,3 +70,12 @@ class ProjectAliasDomModel
     project = @getSelectedProject()
     projectName = @getProjectName(project)
     return projectName
+
+  getSelectedOriginalProjectName: ->
+    project = @getSelectedProject()
+    originalProjectName = @getOriginalProjectName(project)
+    return originalProjectName
+
+  getSelectedProjectPath: ->
+    project = @getSelectedProject()
+    projectPath = @getProjectPath(project)
