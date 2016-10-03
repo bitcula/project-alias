@@ -24,8 +24,19 @@ class ProjectAliasDomModel
     projectPaths
 
   getProjectElement: (name) ->
-    ret = (p for p in @projects when p.getElementsByClassName('name')[0].innerHTML is name)
-    return ret[0]
+    project = (p for p in @projects when p.getElementsByClassName('name')[0].innerHTML is name)
+    return project[0]
+
+  getProjectByPath: (path) ->
+    project = (p for p in @projects when @getProjectPath(p) is path)
+    return project[0]
+
+  getProjectByOriginalProjectName: (name) ->
+    project = (p for p in @projects when @getOriginalProjectName(p) is name)
+    if project
+      return project[0]
+    else
+      return null
 
   # Renames a project within the DOM
   renameProject: (originalName, aliasName) ->
