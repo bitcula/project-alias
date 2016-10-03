@@ -28,8 +28,8 @@ class ProjectAliasViewModel
 
     return modelInstances
 
-  refreshProjects: () ->
-    @projectAliasDomController.refreshProjects()
+  refreshProjectElements: () ->
+    @projectAliasDomController.refreshProjectElements()
 
   deactivate: ->
     @projectAliasDomController.destroy()
@@ -39,8 +39,8 @@ class ProjectAliasViewModel
     projectElements = @projectAliasDomController.getProjectElements()
     projectElements
 
-  getProjectName: (projectElement) ->
-    @projectAliasDomController.getProjectName(projectElement)
+  getCurrentProjectName: (projectElement) ->
+    @projectAliasDomController.getCurrentProjectName(projectElement)
 
   getOriginalProjectName: (projectElement) ->
     name = @projectAliasDomController.getOriginalProjectName(projectElement)
@@ -58,17 +58,17 @@ class ProjectAliasViewModel
         aliasName = instanceModel.getAliasProjectName()
         # The current name may differ from the original name so we have
         # to retrieve it since renameProject() needs the current name
-        project = @projectAliasDomController.getProjectByOriginalProjectName(originalName)
-        currentName = @projectAliasDomController.getProjectName(project)
+        project = @projectAliasDomController.getProjectElementByOriginalName(originalName)
+        currentName = @projectAliasDomController.getCurrentProjectName(project)
         @projectAliasDomController.renameProject(currentName, aliasName)
 
   rename: (aliasName) ->
     if aliasName
       # The original may differ from the current name since it may has
       # been changed before
-      originalName = @projectAliasDomController.getSelectedOriginalProjectName()
+      originalName = @projectAliasDomController.getSelectedProjectOriginalName()
       # Current name represents the name which is currently set
-      currentName = @projectAliasDomController.getSelectedProjectName()
+      currentName = @projectAliasDomController.getSelectedProjectCurrentName()
       projectPath = @projectAliasDomController.getSelectedProjectPath()
       # The instance model is used for serialization
       instanceModel = new ProjectAliasInstanceModel(originalName, aliasName, projectPath)

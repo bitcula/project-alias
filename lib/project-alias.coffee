@@ -26,7 +26,7 @@ module.exports = ProjectAlias =
     @projectAliasRenameView.setCallback this
 
     @openSubscription = atom.workspace.onDidOpen =>
-      @projectAliasViewModel.refreshProjects()
+      @projectAliasViewModel.refreshProjectElements()
       @projectAliasViewModel.restoreAliasNames()
 
     @openSubscription = atom.workspace.onDidOpen =>
@@ -62,7 +62,7 @@ module.exports = ProjectAlias =
     projects = @projectAliasViewModel.getProjectElements()
     for project in projects
         originalProjectName = @projectAliasViewModel.getOriginalProjectName(project)
-        currentProjectName = @projectAliasViewModel.getProjectName(project)
+        currentProjectName = @projectAliasViewModel.getCurrentProjectName(project)
         if originalProjectName isnt currentProjectName
           title = "Original Name: " + originalProjectName
           @subscriptions.add atom.tooltips.add(project, {title: title})
