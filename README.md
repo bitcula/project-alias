@@ -11,6 +11,7 @@ Features:
 
 Roadmap:
 * Add a CSS class to a project element when the project name is changed. This makes it possible to add a specific style to renamed projects
+* Restore original Project Name
 
 Known Bugs:
 * The previously saved project names are restored whenever a file is opened. I am still searching for some callbacks like "project was added" or "atom has loaded completly"
