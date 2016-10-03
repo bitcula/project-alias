@@ -66,5 +66,5 @@ class ProjectAliasRenameView
 
   cancel: ->
     console.log 'Cancel'
-    @callbackcallback.closeRenameView ''
+    @callback.closeRenameView ''
     return
