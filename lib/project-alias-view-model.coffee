@@ -1,13 +1,13 @@
-ProjectAliasDomModel = require './project-alias-dom-model'
+ProjectAliasDomController = require './project-alias-dom-controller'
 ProjectAliasInstanceModel = require './project-alias-instance-model'
 
 module.exports =
 class ProjectAliasViewModel
-  projectAliasDomModel: null
+  projectAliasDomController: null
   instanceModels: null
 
   constructor: () ->
-    @projectAliasDomModel = new ProjectAliasDomModel()
+    @projectAliasDomController = new ProjectAliasDomController()
     @instanceModels = @deserialize()
 
   # We have to use localStorage for serialization because the usual atom
@@ -28,26 +28,26 @@ class ProjectAliasViewModel
 
     return modelInstances
 
-  refreshProjects: () ->
-    @projectAliasDomModel.refreshProjects()
+  refreshProjectElements: () ->
+    @projectAliasDomController.refreshProjectElements()
 
   deactivate: ->
-    @projectAliasDomModel.destroy()
+    @projectAliasDomController.destroy()
     # openSubscription.dispose()
 
   getProjectElements: () ->
-    projectElements = @projectAliasDomModel.getProjectElements()
+    projectElements = @projectAliasDomController.getProjectElements()
     projectElements
 
-  getProjectName: (projectElement) ->
-    @projectAliasDomModel.getProjectName(projectElement)
+  getCurrentProjectName: (projectElement) ->
+    @projectAliasDomController.getCurrentProjectName(projectElement)
 
   getOriginalProjectName: (projectElement) ->
-    name = @projectAliasDomModel.getOriginalProjectName(projectElement)
+    name = @projectAliasDomController.getOriginalProjectName(projectElement)
     name
 
   restoreAliasNames: () ->
-    projectPaths = @projectAliasDomModel.getProjectPaths()
+    projectPaths = @projectAliasDomController.getProjectPaths()
     for instanceModel in @instanceModels
       # The only way to identify a project within the workspace
       # is its path on the local storage. So we check if the path of the current
@@ -58,22 +58,22 @@ class ProjectAliasViewModel
         aliasName = instanceModel.getAliasProjectName()
         # The current name may differ from the original name so we have
         # to retrieve it since renameProject() needs the current name
-        project = @projectAliasDomModel.getProjectByOriginalProjectName(originalName)
-        currentName = @projectAliasDomModel.getProjectName(project)
-        @projectAliasDomModel.renameProject(currentName, aliasName)
+        project = @projectAliasDomController.getProjectElementByOriginalName(originalName)
+        currentName = @projectAliasDomController.getCurrentProjectName(project)
+        @projectAliasDomController.renameProject(currentName, aliasName)
 
   rename: (aliasName) ->
     if aliasName
       # The original may differ from the current name since it may has
       # been changed before
-      originalName = @projectAliasDomModel.getSelectedOriginalProjectName()
+      originalName = @projectAliasDomController.getSelectedProjectOriginalName()
       # Current name represents the name which is currently set
-      currentName = @projectAliasDomModel.getSelectedProjectName()
-      projectPath = @projectAliasDomModel.getSelectedProjectPath()
+      currentName = @projectAliasDomController.getSelectedProjectCurrentName()
+      projectPath = @projectAliasDomController.getSelectedProjectPath()
       # The instance model is used for serialization
       instanceModel = new ProjectAliasInstanceModel(originalName, aliasName, projectPath)
       @_storeInstance(instanceModel)
-      @projectAliasDomModel.renameProject(currentName, aliasName)
+      @projectAliasDomController.renameProject(currentName, aliasName)
       @serialize()
 
   # Iterate over instance models to check if an alias changed and store it
