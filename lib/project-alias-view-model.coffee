@@ -6,13 +6,27 @@ class ProjectAliasViewModel
   projectAliasDomModel: null
   instanceModels: null
 
-  constructor: (instanceModels) ->
+  constructor: () ->
     @projectAliasDomModel = new ProjectAliasDomModel()
-    @instanceModels = instanceModels
+    @instanceModels = @deserialize()
 
-    # TODO: Subscribe somehow on "Open Project" event
-    #@openSubscription = atom.workspace.onDidOpen =>
-      #@projectAliasController.refreshProjects()
+  # We have to use localStorage for serialization because the usual atom
+  # way wont restore data between atom restarts
+  serialize: () ->
+    localStorage.setItem('project-alias', JSON.stringify({InstanceModels: @instanceModels}))
+
+  deserialize: () ->
+    modelInstances = []
+    jsonObj = localStorage.getItem('project-alias')
+    if jsonObj
+      jsonObj = JSON.parse(jsonObj)
+      for o in jsonObj["InstanceModels"]
+        originalProjectName = o.originalProjectName
+        aliasProjectName = o.aliasProjectName
+        projectPath = o.projectPath
+        modelInstances.push(new ProjectAliasInstanceModel(originalProjectName, aliasProjectName, projectPath))
+
+    return modelInstances
 
   refreshProjects: () ->
     @projectAliasDomModel.refreshProjects()
@@ -32,9 +46,6 @@ class ProjectAliasViewModel
     name = @projectAliasDomModel.getOriginalProjectName(projectElement)
     name
 
-  # TODO:
-  # Currently, I am searching for a way to serialize all aliases to local
-  # storage so you are able to restore alias names after restarting atom
   restoreAliasNames: () ->
     projectPaths = @projectAliasDomModel.getProjectPaths()
     for instanceModel in @instanceModels
@@ -45,6 +56,10 @@ class ProjectAliasViewModel
       if projectPath in projectPaths
         originalName = instanceModel.getOriginalProjectName()
         aliasName = instanceModel.getAliasProjectName()
+        # The current name may differ from the original name so we have
+        # to retrieve it since renameProject() needs the current name
+        project = @projectAliasDomModel.getProjectByOriginalProjectName(originalName)
+        currentName = @projectAliasDomModel.getProjectName(project)
         @projectAliasDomModel.renameProject(currentName, aliasName)
 
   rename: (aliasName) ->
@@ -59,13 +74,14 @@ class ProjectAliasViewModel
       instanceModel = new ProjectAliasInstanceModel(originalName, aliasName, projectPath)
       @_storeInstance(instanceModel)
       @projectAliasDomModel.renameProject(currentName, aliasName)
+      @serialize()
 
-  # Iterate over instance models to check if
+  # Iterate over instance models to check if an alias changed and store it
+  # for serialization
   _storeInstance: (instanceModel) ->
     for im in @instanceModels
       # The alias may have changed for a project so we will update the original
       # reference
-      debugger
       if instanceModel.getProjectPath() is im.getProjectPath()
         im.update(instanceModel)
         return
