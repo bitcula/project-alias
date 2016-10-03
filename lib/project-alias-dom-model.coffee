@@ -16,22 +16,27 @@ class ProjectAliasDomModel
     return @projects
 
   getProjectNames: () ->
-    projectNames = []
-    Array::forEach.call @projects, (pl) ->
-      projectNames.push pl.header.innerText
-      return
+    projectNames = (p.header.innerText for p in @projects)
     projectNames
 
+  getProjectPaths: () ->
+    projectPaths = (@getProjectPath(p) for p in @projects)
+    projectPaths
+
   getProjectElement: (name) ->
-    ret = null
-    Array::forEach.call @projects, (project) ->
-      projectNameElement = project.getElementsByClassName('name')[0]
-      projectName = projectNameElement.innerHTML
-      if projectName == name
-        ret = project
-        return
-      return
-    ret
+    project = (p for p in @projects when p.getElementsByClassName('name')[0].innerHTML is name)
+    return project[0]
+
+  getProjectByPath: (path) ->
+    project = (p for p in @projects when @getProjectPath(p) is path)
+    return project[0]
+
+  getProjectByOriginalProjectName: (name) ->
+    project = (p for p in @projects when @getOriginalProjectName(p) is name)
+    if project
+      return project[0]
+    else
+      return null
 
   # Renames a project within the DOM
   renameProject: (originalName, aliasName) ->
@@ -64,3 +69,12 @@ class ProjectAliasDomModel
     project = @getSelectedProject()
     projectName = @getProjectName(project)
     return projectName
+
+  getSelectedOriginalProjectName: ->
+    project = @getSelectedProject()
+    originalProjectName = @getOriginalProjectName(project)
+    return originalProjectName
+
+  getSelectedProjectPath: ->
+    project = @getSelectedProject()
+    projectPath = @getProjectPath(project)
