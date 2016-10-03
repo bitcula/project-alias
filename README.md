@@ -15,4 +15,4 @@ Roadmap:
 Known Bugs:
 * The previously saved project names are restored whenever a file is opened. I am still searching for some callbacks like "project was added" or "atom has loaded completly"
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![Screenshot](https://cloud.githubusercontent.com/assets/1751865/19036233/e21ea0ec-896e-11e6-86b5-d24d28129a3e.png)
