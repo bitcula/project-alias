@@ -11,7 +11,8 @@ class ProjectAliasViewModel
     @instanceModels = @deserialize()
 
   # We have to use localStorage for serialization because the usual atom
-  # way wont restore data between atom restarts
+  # way wont restore data between atom restarts. This method is executed
+  # whenever a new project name was given by the user
   serialize: () ->
     localStorage.setItem('project-alias', JSON.stringify({InstanceModels: @instanceModels}))
 
@@ -33,7 +34,6 @@ class ProjectAliasViewModel
 
   deactivate: ->
     @projectAliasDomController.destroy()
-    # openSubscription.dispose()
 
   getProjectElements: () ->
     projectElements = @projectAliasDomController.getProjectElements()
