@@ -3,7 +3,7 @@ jQuery = require 'jquery'
 $ = jQuery
 
 module.exports =
-class ProjectAliasDomModel
+class ProjectAliasDomController
   projects: null
 
   constructor: () ->
