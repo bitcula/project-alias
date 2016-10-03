@@ -25,8 +25,8 @@ class ProjectAliasDomModel
   getProjectPaths: () ->
     projectPaths = []
     for p in @projects
-      projectPaths.push(@getProjectPath(pl))
-    projectPaths    
+      projectPaths.push(@getProjectPath(p))
+    projectPaths
 
   getProjectElement: (name) ->
     ret = null
