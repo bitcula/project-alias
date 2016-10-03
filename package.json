@@ -9,7 +9,7 @@
     "rename",
     "project-alias"
   ],
-  "repository": "https://github.com/atom/project-alias",
+  "repository": "https://github.com/bitcula/project-rename",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
