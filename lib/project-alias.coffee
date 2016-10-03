@@ -11,8 +11,11 @@ module.exports = ProjectAlias =
 
   activate: (state) ->
     @projectAliasRenameView = new ProjectAliasRenameView(state.projectAliasRenameViewState)
-    @projectAliasViewModel = new ProjectAliasViewModel()
     @modalRenamePanel = atom.workspace.addModalPanel(item: @projectAliasRenameView.getElement(), visible: false)
+
+    #TODO: Check if there are serialized objects in state param
+    instanceModels = @retrieveInstanceModels()
+    @projectAliasViewModel = new ProjectAliasViewModel(instanceModels)
 
     # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
     @subscriptions = new CompositeDisposable
@@ -21,6 +24,10 @@ module.exports = ProjectAlias =
 
     # The view has to execute its callback methods on this module
     @projectAliasRenameView.setCallback this
+
+    @openSubscription = atom.workspace.onDidOpen =>
+      @projectAliasViewModel.refreshProjectElements()
+      @projectAliasViewModel.restoreAliasNames()
 
     @openSubscription = atom.workspace.onDidOpen =>
       @refreshToolTips()
@@ -37,6 +44,10 @@ module.exports = ProjectAlias =
   serialize: ->
     projectAliasRenameViewState: @projectAliasRenameView.serialize()
 
+  retrieveInstanceModels: ->
+    instanceModels = []
+    return instanceModels
+
     # Called when the user right-clicks a project
   showRenameView: ->
     @modalRenamePanel.show()
@@ -44,7 +55,6 @@ module.exports = ProjectAlias =
 
   # Will be called by modalRenamePanel when the user interacts with a button
   closeRenameView: (newName) ->
-    debugger
     @projectAliasViewModel.rename(newName)
     @modalRenamePanel.hide()
 
@@ -52,7 +62,7 @@ module.exports = ProjectAlias =
     projects = @projectAliasViewModel.getProjectElements()
     for project in projects
         originalProjectName = @projectAliasViewModel.getOriginalProjectName(project)
-        currentProjectName = @projectAliasViewModel.getProjectName(project)
+        currentProjectName = @projectAliasViewModel.getCurrentProjectName(project)
         if originalProjectName isnt currentProjectName
           title = "Original Name: " + originalProjectName
           @subscriptions.add atom.tooltips.add(project, {title: title})

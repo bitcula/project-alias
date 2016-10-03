@@ -1,15 +1,15 @@
 {
   "name": "project-alias",
   "main": "./lib/project-alias",
-  "version": "0.1.0",
-  "description": "Makes it possible to rename a project",
+  "version": "0.2.0",
+  "description": "Rename a project by right-clicking it",
   "keywords": [
     "project",
     "alias",
     "rename",
     "project-alias"
   ],
-  "repository": "https://github.com/atom/project-alias",
+  "repository": "https://github.com/bitcula/project-rename",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
